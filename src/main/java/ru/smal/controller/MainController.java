@@ -16,9 +16,6 @@ public class MainController {
     private final UserService userService;
 
     @FXML
-    public Button exitButtonField;
-
-    @FXML
     private Label alertText;
 
     @FXML
@@ -46,7 +43,8 @@ public class MainController {
     }
 
     public void exitButton(ActionEvent actionEvent) {
-        exitButtonField.getScene().getWindow().hide();
+        final Button source = (Button) actionEvent.getSource();
+        source.getScene().getWindow().hide();
     }
 
     @FXML
