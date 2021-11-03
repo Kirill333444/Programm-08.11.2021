@@ -6,6 +6,7 @@ import org.hibernate.Transaction;
 import ru.smal.dao.Dao;
 import ru.smal.model.User;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class UserDaoImpl implements Dao<User, Integer> {
@@ -31,29 +32,35 @@ public class UserDaoImpl implements Dao<User, Integer> {
     }
 
     @Override
-    public void save(User user) {
+    public boolean save(User user) {
+        if (user == null) return false;
         try(Session session = factory.openSession()) {
             final Transaction transaction = session.beginTransaction();
             session.save(user);
             transaction.commit();
         }
+        return true;
     }
 
     @Override
-    public void update(User user) {
+    public boolean update(User user) {
+        if (user == null) return false;
         try(Session session = factory.openSession()) {
             final Transaction transaction = session.beginTransaction();
             session.update(user);
             transaction.commit();
         }
+        return false;
     }
 
     @Override
-    public void delete(User user) {
+    public boolean delete(User user) {
+        if (user == null) return false;
         try(Session session = factory.openSession()) {
             final Transaction transaction = session.beginTransaction();
             session.delete(user);
             transaction.commit();
         }
+        return true;
     }
 }

@@ -1,8 +1,10 @@
 package ru.smal.model;
 
 import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -10,15 +12,15 @@ import javax.persistence.*;
 @RequiredArgsConstructor
 @ToString
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "user_db")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
 
+    @Column(name = "first_name")
     @NonNull
-    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @NonNull
@@ -28,4 +30,5 @@ public class User {
     @NonNull
     @Column(name = "age", nullable = false)
     private int age;
+
 }
