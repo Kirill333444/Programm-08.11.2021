@@ -26,11 +26,11 @@ public class UserService {
         return userDao.save(user);
     }
 
-    public boolean update(User user) {
-        return userDao.save(user);
+    public void update(User user) {
+        userDao.update(user);
     }
 
-    public boolean delete(User user) {
-        return userDao.save(user);
+    public void delete(User user) {
+        userDao.delete(user);
     }
 }

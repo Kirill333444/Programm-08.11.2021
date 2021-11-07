@@ -10,6 +10,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@AllArgsConstructor
 @ToString
 @Entity
 @Table(name = "users", schema = "user_db")

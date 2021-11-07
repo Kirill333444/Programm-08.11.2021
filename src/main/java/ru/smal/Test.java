@@ -11,8 +11,22 @@ public class Test {
 
         UserService userService = new UserService(factory);
 
-        userService.save(new User("Nikita", "Malysev", 5));
+        User user = new User("Vladimir", "Vladimirov", 20);
 
+
+
+        //Save
+        userService.save(user);
+
+        //Update
+        final User byId = userService.findById(1);
+        byId.setFirstName("X");
+        byId.setLastName("X");
+        byId.setAge(10);
+        userService.update(byId);
+
+        //Delete
+        userService.delete(userService.findById(34));
 
     }
 }
