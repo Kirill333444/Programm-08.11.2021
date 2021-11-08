@@ -21,6 +21,7 @@
 
         <!--mapping-->
         <mapping class="ru.smal.model.User"/>
+        <mapping class="ru.smal.model.Admin"/>
 
     </session-factory>
 </hibernate-configuration>

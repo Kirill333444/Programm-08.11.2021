@@ -3,9 +3,12 @@ package ru.smal.controller;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.util.StringConverter;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import ru.smal.model.User;
@@ -14,14 +17,15 @@ import ru.smal.service.UserService;
 public class ListUsersController {
 
     private final UserService userService;
+    private final ObservableList<User> users = FXCollections.observableArrayList();
+
 
     public ListUsersController() {
         SessionFactory factory = new Configuration().configure().buildSessionFactory();
         userService = new UserService(factory);
     }
 
-    private final ObservableList<User> users = FXCollections.observableArrayList();
-
+    //Table view
     @FXML
     private TableView<User> userTableView;
     @FXML
@@ -33,13 +37,17 @@ public class ListUsersController {
     @FXML
     private TableColumn<User, Integer> ageColumn;
 
+    //Search
     @FXML
-    private TextField searchTextField;
+    private TextField searchTxt;
     @FXML
     private Button searchButton;
-    @FXML
-    private Label countLabel;
 
+    //Data count
+    @FXML
+    private Label countLbl;
+
+    //User info
     @FXML
     public Label labelId;
     @FXML
@@ -51,34 +59,70 @@ public class ListUsersController {
 
     @FXML
     private void initialize() {
-        initData();
+        initUsersFromDatabase();
+
+        //Filtered by user first name
+        searchByFirstName();
 
         //Initialize TableView
-        idColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getId()));
-        firstNameColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getFirstName()));
-        lastNameColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getLastName()));
-        ageColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getAge()));
         userTableView.setItems(users);
+        userTableView.setEditable(true);
 
+        idColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getId()));
 
+        //Update cell firstName
+        firstNameColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getFirstName()));
+        firstNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        firstNameColumn.setOnEditCommit(event -> {
+            User user = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            user.setFirstName(event.getNewValue());
+            userService.update(user);
+        });
+
+        //Update cell lastName
+        lastNameColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getLastName()));
+        lastNameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+        lastNameColumn.setOnEditCommit(event -> {
+            User user = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            user.setLastName(event.getNewValue());
+            userService.update(user);
+        });
+
+        //Update cell age
+        ageColumn.setCellValueFactory(u -> new SimpleObjectProperty<>(u.getValue().getAge()));
+        ageColumn.setCellFactory(TextFieldTableCell.forTableColumn(new StringConverter<>() {
+            @Override
+            public String toString(Integer age) {
+                return String.valueOf(age);
+            }
+
+            @Override
+            public Integer fromString(String age) {
+                return Integer.parseInt(age);
+            }
+        }));
+        ageColumn.setOnEditCommit(event -> {
+            User user = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            user.setAge(event.getNewValue());
+            userService.update(user);
+        });
+
+        //Выделение строки в таблице, подключение слушателя и выведение детальной информации в правой части окна
         listenerTabUserDetails(null);
         userTableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             listenerTabUserDetails(newValue);
         });
 
-        //Data size
-        countLabel.setText(String.valueOf(userTableView.getItems().size()));
-
-
-
+        //Data count
+        countLbl.setText(String.valueOf(userTableView.getItems().size()));
     }
 
-    private void initData() {
+    private void initUsersFromDatabase() {
         users.addAll(userService.findAll());
     }
 
     @FXML
-    public void buttonUpdate(ActionEvent actionEvent) {
+    public void updateUserButton(ActionEvent actionEvent) {
         int selectedIndex = userTableView.getSelectionModel().getSelectedIndex();
         final User user = userTableView.getSelectionModel().getSelectedItem();
         user.setFirstName(textFieldFirstName.getText());
@@ -87,29 +131,31 @@ public class ListUsersController {
         userTableView.getItems().set(selectedIndex, user);
         userService.update(user);
         cleanTextField();
-        countLabel.setText(String.valueOf(userTableView.getItems().size()));
+        countLbl.setText(String.valueOf(userTableView.getItems().size()));
     }
 
     @FXML
-    public void buttonDelete(ActionEvent actionEvent) {
+    public void deleteUserButton(ActionEvent actionEvent) {
         final User user = userTableView.getSelectionModel().getSelectedItem();
         userService.delete(user);
         userTableView.getItems().remove(user);
         cleanTextField();
         System.out.println("Delete user: " + user);
-        countLabel.setText(String.valueOf(userTableView.getItems().size()));
+        countLbl.setText(String.valueOf(userTableView.getItems().size()));
     }
 
     @FXML
-    public void buttonSave(ActionEvent actionEvent) {
+    public void saveUserButton(ActionEvent actionEvent) {
         //Создаем пользователя, в качестве значений принимаем данные с текстовых полей.
         User user = new User(textFieldFirstName.getText(), textFieldLastName.getText(), Integer.parseInt(textFieldAge.getText()));
         //Сохраняем данные в базу данных
         userService.save(user);
         //Добавляем в коллекцию для моментального обновления
         userTableView.getItems().add(user);
+        //Очищаем поля
         cleanTextField();
-        countLabel.setText(String.valueOf(userTableView.getItems().size()));
+        //Счетчик количества записей в БД
+        countLbl.setText(String.valueOf(userTableView.getItems().size()));
     }
 
     private void listenerTabUserDetails(User user) {
@@ -124,6 +170,15 @@ public class ListUsersController {
             textFieldLastName.setText("");
             textFieldAge.setText("");
         }
+    }
+
+    private void searchByFirstName() {
+        searchTxt.textProperty().addListener((obs, old, newValue) -> {
+            FilteredList<User> userFilteredList = new FilteredList<>(users,
+                    s -> s.getFirstName().toLowerCase().contains(newValue.toLowerCase().trim()));
+            userTableView.setItems(userFilteredList);
+            countLbl.setText(String.valueOf(userFilteredList.size()));
+        });
     }
 
     private void cleanTextField() {
