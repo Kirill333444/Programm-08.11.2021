@@ -13,7 +13,7 @@ public class Test {
 
 //        UserService userService = new UserService(factory);
 //
-//        User user = new User("Vladimir", "Vladimirov", 20);
+//        User user = new User("kirill", "klementjev", 20);
 //
 //        //Save
 //        userService.save(user);
@@ -39,7 +39,7 @@ public class Test {
 //
 //        //update
 //        final Admin updated = adminService.findById(1);
-//        updated.setLogin("nikolay");
+//        updated.setLogin("dmitriy");
 //        adminService.update(updated);
 
 //        //delete

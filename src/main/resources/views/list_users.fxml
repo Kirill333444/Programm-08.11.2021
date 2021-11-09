@@ -19,7 +19,7 @@
       <Label layoutX="20.0" layoutY="369.0" text="Количество" />
       <Label fx:id="countLbl" layoutX="93.0" layoutY="369.0" text="Label" />
       <Separator layoutX="410.0" layoutY="5.0" orientation="VERTICAL" prefHeight="391.0" prefWidth="8.0" />
-      <Label layoutX="566.0" layoutY="13.0" text="User info">
+      <Label layoutX="566.0" layoutY="13.0" text="Информация">
          <font>
             <Font size="18.0" />
          </font>
@@ -36,7 +36,7 @@
            </font>
        </Label>
 
-      <Label layoutX="431.0" layoutY="127.0" text="First name">
+      <Label layoutX="431.0" layoutY="127.0" text="Имя">
          <font>
             <Font size="18.0" />
          </font>
@@ -47,7 +47,7 @@
          </font>
       </TextField>
 
-       <Label layoutX="431.0" layoutY="170" text="Last name">
+       <Label layoutX="431.0" layoutY="170" text="Фамилия">
            <font>
                <Font size="18.0" />
            </font>
@@ -57,9 +57,9 @@
                <Font size="18.0" />
            </font>
        </TextField>
-       <Label layoutX="431.0" layoutY="220" text="Age">
+       <Label layoutX="431.0" layoutY="220" text="Возраст (лет)">
            <font>
-               <Font size="18.0" />
+               <Font size="14.0" />
            </font>
        </Label>
        <TextField fx:id="textFieldAge" layoutX="528.0" layoutY="220">
@@ -68,17 +68,17 @@
            </font>
        </TextField>
 
-      <Button layoutX="447.0" layoutY="348.0" mnemonicParsing="false" text="Добавить" onAction="#saveUserButton">
+      <Button layoutX="447.0" layoutY="348.0" mnemonicParsing="false" onAction="#saveUserButton" text="Добавить">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button layoutX="574.0" layoutY="348.0" mnemonicParsing="false" text="Удалить" onAction="#deleteUserButton">
+      <Button layoutX="574.0" layoutY="348.0" mnemonicParsing="false" onAction="#deleteUserButton" text="Удалить">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button layoutX="687.0" layoutY="348.0" mnemonicParsing="false" text="Обновить" onAction="#updateUserButton">
+      <Button layoutX="687.0" layoutY="348.0" mnemonicParsing="false" onAction="#updateUserButton" text="Обновить">
          <font>
             <Font size="15.0" />
          </font>

@@ -52,7 +52,7 @@ public class MainController {
             openWindow();
         } else {
             alertText.setTextFill(Color.RED);
-            alertText.setText("Логин или пароль не соответствует");
+            alertText.setText("Неверный логин или пароль");
         }
     }
 
